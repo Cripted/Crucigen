@@ -30,9 +30,6 @@ import com.example.crucigen.ui.theme.CrucigenTheme
 import java.text.SimpleDateFormat
 import java.util.*
 
-// ══════════════════════════════════════════════════════════════════════════════
-// COLORES
-// ══════════════════════════════════════════════════════════════════════════════
 
 val GradientTop   = Color(0xFF29B6F6)
 val GradientBottom = Color(0xFF3F51B5)
@@ -512,7 +509,7 @@ fun CrearCrucigramaScreen(
                         onClick = {
                             if (pistaInput.isNotBlank() && respuestaInput.isNotBlank()) {
                                 pistas = pistas + Pista(
-                                    id = pistas.size + 1,
+                                    id = System.currentTimeMillis().toInt(),
                                     pista = pistaInput,
                                     respuesta = respuestaInput
                                 )
@@ -563,11 +560,17 @@ fun CrearCrucigramaScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        .clickable {
+                                            // EDITAR: Cargar en los campos y quitar de la lista
+                                            pistaInput = p.pista
+                                            respuestaInput = p.respuesta
+                                            pistas = pistas.filter { it.id != p.id }
+                                        }
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                                         Icon(Icons.Default.Edit, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(18.dp))
                                         Spacer(Modifier.width(8.dp))
                                         Column {
@@ -575,7 +578,11 @@ fun CrearCrucigramaScreen(
                                             Text("→ ${p.respuesta}", fontSize = 12.sp, color = Color.Gray)
                                         }
                                     }
-                                    Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = Color.Gray)
+                                    IconButton(onClick = {
+                                        pistas = pistas.filter { it.id != p.id }
+                                    }) {
+                                        Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = Color.Red, modifier = Modifier.size(20.dp))
+                                    }
                                 }
                                 if (index < pistas.lastIndex) HorizontalDivider()
                             }
